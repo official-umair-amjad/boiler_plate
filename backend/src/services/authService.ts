@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { User } from '@prisma/client';
 import prisma from '../config/database';
 import { ApiError } from '../utils/ApiError';
@@ -30,11 +30,16 @@ interface AuthResponse {
 
 export class AuthService {
   private generateToken(userId: string): string {
-    return jwt.sign(
-      { id: userId },
-      process.env.JWT_SECRET!,
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
-    );
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET is not defined');
+    }
+    
+    const options: SignOptions = {
+      expiresIn: (process.env.JWT_EXPIRE || '7d') as any
+    };
+    
+    return jwt.sign({ id: userId }, secret, options);
   }
 
   private exclude<User, Key extends keyof User>(
