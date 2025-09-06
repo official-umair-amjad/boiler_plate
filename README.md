@@ -1,247 +1,213 @@
-# MERN Stack Boilerplate
+# MERN Stack Boilerplate with TypeScript
 
-A comprehensive, production-ready MERN (MongoDB/PostgreSQL, Express, React, Node.js) stack boilerplate with TypeScript, featuring authentication, API documentation, and best practices.
+A comprehensive, production-ready MERN stack boilerplate featuring modern development practices, robust architecture, and scalable folder structure.
 
-## 🚀 Features
+## 🚀 Tech Stack
 
-- **Backend (Node.js + TypeScript + Express)**
-  - RESTful API with Express.js
-  - PostgreSQL database with Prisma ORM
-  - JWT-based authentication
-  - Comprehensive middleware (logging, validation, authentication)
-  - Centralized error handling
-  - API documentation with Swagger
-  - Code formatting with Prettier + ESLint
+### Frontend
+- **React 19** with TypeScript
+- **React Router** for navigation
+- **Axios** for API communication
+- **Context API** for state management
+- **Modern CSS** with responsive design
 
-- **Frontend (React + TypeScript)**
-  - Modern React with hooks and context
-  - TypeScript for type safety
-  - React Router for navigation
-  - Axios for API integration
-  - Responsive design with CSS
-  - Authentication context and protected routes
+### Backend
+- **Node.js** with TypeScript
+- **Express.js** web framework
+- **Prisma ORM** for database operations
+- **PostgreSQL** database
+- **JWT** authentication
+- **bcryptjs** for password hashing
 
-- **Development Features**
-  - Hot reloading for both frontend and backend
-  - Concurrent development server script
-  - Git hooks for code quality
-  - Environment variable management
-  - Database migrations and seeding
+### Development Tools
+- **ESLint** + **Prettier** for code quality
+- **Nodemon** for development server
+- **ts-node** for TypeScript execution
+- **Swagger** for API documentation
+- **Morgan** for request logging
+- **Helmet** for security headers
 
-## 📋 Prerequisites
+## 📁 Project Structure
 
-Before running this application, make sure you have the following installed:
+```
+mern-boilerplate/
+├── frontend/                 # React TypeScript application
+│   ├── public/              # Static assets
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── contexts/        # React Context providers
+│   │   ├── pages/          # Page components
+│   │   ├── services/       # API service layer
+│   │   ├── types/          # TypeScript type definitions
+│   │   └── App.tsx         # Main App component
+│   ├── package.json
+│   └── tsconfig.json
+├── backend/                 # Node.js TypeScript API
+│   ├── prisma/             # Database schema and migrations
+│   ├── src/
+│   │   ├── config/         # Configuration files
+│   │   ├── controllers/    # Request handlers
+│   │   ├── middleware/     # Express middleware
+│   │   ├── models/         # Data models and DTOs
+│   │   ├── routes/         # API route definitions
+│   │   ├── services/       # Business logic layer
+│   │   └── utils/          # Utility functions
+│   ├── package.json
+│   └── tsconfig.json
+└── package.json            # Root package.json for scripts
+```
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [PostgreSQL](https://www.postgresql.org/) (v12 or higher)
-- [Git](https://git-scm.com/)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+## ✨ Key Features
 
-## 🛠️ Installation & Setup
+### 🔐 Authentication & Authorization
+- JWT-based authentication
+- Password hashing with bcryptjs
+- Role-based access control (USER/ADMIN)
+- Protected routes and API endpoints
+- Token validation and refresh
+
+### 🛡️ Security & Middleware
+- **Helmet** for security headers
+- **CORS** configuration for cross-origin requests
+- **Morgan** logging for request monitoring
+- **Input validation** middleware
+- **Error handling** with consistent API responses
+- **Rate limiting** ready configuration
+
+### 🏗️ Architecture & Design Patterns
+- **Modular folder structure** for scalability
+- **Service layer** for business logic separation
+- **Data Transfer Objects (DTOs)** for type safety
+- **Repository pattern** with Prisma ORM
+- **Centralized error handling**
+- **Consistent API response format**
+
+### 🔄 Database Integration
+- **Prisma ORM** with PostgreSQL
+- **Database migrations** and seeding
+- **Type-safe database queries**
+- **Connection pooling** and optimization
+
+### 📚 API Documentation
+- **Swagger/OpenAPI** integration
+- **Interactive API documentation**
+- **Automated endpoint discovery**
+- **Request/response schema validation**
+
+### 🎨 Code Quality & Formatting
+- **ESLint** with TypeScript rules
+- **Prettier** for consistent formatting
+- **Pre-commit hooks** ready
+- **TypeScript strict mode** enabled
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v18 or higher)
+- PostgreSQL (v13 or higher)
+- npm or yarn
 
 ### 1. Clone the Repository
-
 ```bash
-git clone <your-repository-url>
+git clone <repository-url>
 cd mern-boilerplate
 ```
 
 ### 2. Install Dependencies
-
-Install dependencies for both frontend and backend:
-
 ```bash
-# Install root dependencies (for concurrent development)
-npm install
+# Install all dependencies (frontend + backend)
+npm run install-all
 
-# Install backend dependencies
-npm run install-server
-
-# Install frontend dependencies
-npm run install-client
+# Or install individually
+npm run install-server  # Backend dependencies
+npm run install-client  # Frontend dependencies
 ```
 
-### 3. Environment Configuration
+### 3. Environment Setup
 
-#### Backend Environment Variables
-
-1. Copy the environment example file:
-```bash
-cd backend
-cp env.example .env
-```
-
-2. Update the `.env` file with your configuration:
+#### Backend Environment
+Create `backend/.env` from `backend/env.example`:
 ```env
 NODE_ENV=development
 PORT=5000
 DATABASE_URL="postgresql://username:password@localhost:5432/boilerplate_db"
-JWT_SECRET=your_super_secret_jwt_key_here
+JWT_SECRET=your_super_secure_jwt_secret_key_here
 JWT_EXPIRE=7d
 CORS_ORIGIN=http://localhost:3000
 ```
 
-#### Frontend Environment Variables
-
-1. Copy the environment example file:
-```bash
-cd frontend
-cp env.example .env
-```
-
-2. Update the `.env` file:
+#### Frontend Environment
+Create `frontend/.env` from `frontend/env.example`:
 ```env
 REACT_APP_API_URL=http://localhost:5000/api
 ```
 
 ### 4. Database Setup
-
-1. Create a PostgreSQL database:
-```sql
-CREATE DATABASE boilerplate_db;
-```
-
-2. Run database migrations:
 ```bash
 cd backend
-npm run db:migrate
-```
 
-3. Generate Prisma client:
-```bash
+# Generate Prisma client
 npm run db:generate
+
+# Run database migrations
+npm run db:migrate
+
+# (Optional) Seed the database
+npm run db:seed
 ```
 
-### 5. Start the Application
-
-#### Development Mode (Recommended)
-
-Run both frontend and backend concurrently:
+### 5. Start Development Servers
 ```bash
-# From root directory
+# Start both frontend and backend
 npm run dev
+
+# Or start individually
+npm run server  # Backend only (http://localhost:5000)
+npm run client  # Frontend only (http://localhost:3000)
 ```
 
-This will start:
-- Backend server on `http://localhost:5000`
-- Frontend development server on `http://localhost:3000`
+## 📖 API Documentation
 
-#### Individual Services
+Once the backend server is running, access the interactive API documentation at:
+**http://localhost:5000/api-docs**
 
-Start backend only:
-```bash
-npm run server
+### Available Endpoints
+
+#### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user (protected)
+
+#### Health Check
+- `GET /api/health` - Server health status
+
+### API Response Format
+All API responses follow a consistent format:
+
+**Success Response:**
+```json
+{
+  "success": true,
+  "statusCode": 200,
+  "message": "Operation successful",
+  "data": { ... }
+}
 ```
 
-Start frontend only:
-```bash
-npm run client
+**Error Response:**
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Error message",
+  "code": "ERROR_CODE"
+}
 ```
 
-## 📚 API Documentation
+## 🗃️ Database Schema
 
-Once the backend is running, you can access the interactive API documentation at:
-- **Swagger UI**: `http://localhost:5000/api-docs`
-
-The API provides the following endpoints:
-
-### Authentication Endpoints
-
-- `POST /api/auth/register` - Register a new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (requires authentication)
-
-### Health Check
-
-- `GET /api/health` - Server health check
-
-## 🏗️ Project Structure
-
-```
-mern-boilerplate/
-├── backend/                    # Backend application
-│   ├── src/
-│   │   ├── config/            # Configuration files (database, swagger)
-│   │   ├── controllers/       # Request handlers
-│   │   ├── middleware/        # Custom middleware (auth, validation, error handling)
-│   │   ├── routes/           # API routes
-│   │   ├── services/         # Business logic
-│   │   ├── utils/            # Utility functions and classes
-│   │   └── app.ts            # Express app setup
-│   ├── prisma/               # Database schema and migrations
-│   ├── docs/                 # API documentation
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── .env.example
-├── frontend/                  # React frontend application
-│   ├── public/               # Static files
-│   ├── src/
-│   │   ├── components/       # Reusable React components
-│   │   ├── contexts/         # React contexts (Auth)
-│   │   ├── hooks/            # Custom React hooks
-│   │   ├── pages/            # Page components
-│   │   ├── services/         # API service functions
-│   │   ├── types/            # TypeScript type definitions
-│   │   ├── utils/            # Utility functions
-│   │   ├── App.tsx           # Main App component
-│   │   └── index.tsx         # React entry point
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── .env.example
-├── package.json              # Root package.json for scripts
-├── README.md                 # This file
-└── .gitignore               # Git ignore rules
-```
-
-## 🔧 Available Scripts
-
-### Root Level Scripts
-
-- `npm run dev` - Start both frontend and backend in development mode
-- `npm run server` - Start backend only
-- `npm run client` - Start frontend only
-- `npm run build` - Build both frontend and backend for production
-- `npm run install-all` - Install dependencies for both frontend and backend
-
-### Backend Scripts
-
-```bash
-cd backend
-npm run dev          # Start development server with hot reload
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint errors
-npm run format       # Format code with Prettier
-npm run db:generate  # Generate Prisma client
-npm run db:migrate   # Run database migrations
-npm run db:reset     # Reset database
-npm run db:studio    # Open Prisma Studio
-```
-
-### Frontend Scripts
-
-```bash
-cd frontend
-npm start            # Start development server
-npm run build        # Build for production
-npm test             # Run tests
-npm run eject        # Eject from Create React App
-```
-
-## 🔐 Authentication Flow
-
-1. **Registration**: Users can register with email, password, and optional name
-2. **Login**: Users authenticate with email and password
-3. **JWT Token**: Server issues JWT token on successful authentication
-4. **Protected Routes**: Frontend protects routes using React Context
-5. **API Authentication**: Backend validates JWT tokens for protected endpoints
-
-## 🗄️ Database Schema
-
-The application uses PostgreSQL with Prisma ORM. Current schema includes:
-
-```prisma
+### User Model
+```sql
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -258,153 +224,141 @@ enum Role {
 }
 ```
 
-## 🚢 Production Deployment
+## 🛠️ Development
 
-### Backend Deployment
-
-1. Build the backend:
+### Code Quality Scripts
 ```bash
 cd backend
+
+# Linting
+npm run lint           # Check for linting errors
+npm run lint:fix       # Fix linting errors
+
+# Formatting
+npm run format         # Format code with Prettier
+
+# Type checking
+npx tsc --noEmit      # Check TypeScript types
+```
+
+### Database Operations
+```bash
+cd backend
+
+# Prisma commands
+npm run db:generate    # Generate Prisma client
+npm run db:migrate     # Run migrations
+npm run db:reset       # Reset database
+npm run db:studio      # Open Prisma Studio
+```
+
+### Building for Production
+```bash
+# Build both frontend and backend
 npm run build
+
+# Or build individually
+cd backend && npm run build
+cd frontend && npm run build
 ```
 
-2. Set production environment variables
-3. Run database migrations:
-```bash
-npm run db:migrate
-```
+## 📝 Environment Variables
 
-4. Start the production server:
-```bash
-npm start
-```
+### Backend Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NODE_ENV` | Environment mode | `development` |
+| `PORT` | Server port | `5000` |
+| `DATABASE_URL` | PostgreSQL connection string | Required |
+| `JWT_SECRET` | JWT signing secret | Required |
+| `JWT_EXPIRE` | JWT expiration time | `7d` |
+| `CORS_ORIGIN` | Allowed CORS origin | `http://localhost:3000` |
 
-### Frontend Deployment
+### Frontend Environment Variables
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `REACT_APP_API_URL` | Backend API URL | `http://localhost:5000/api` |
 
-1. Build the frontend:
-```bash
-cd frontend
-npm run build
-```
+## 🔒 Security Features
 
-2. Serve the `build` folder using a static file server
-
-### Environment Variables for Production
-
-Make sure to set these environment variables in your production environment:
-
-**Backend:**
-- `NODE_ENV=production`
-- `PORT=5000`
-- `DATABASE_URL=<production-database-url>`
-- `JWT_SECRET=<strong-secret-key>`
-- `CORS_ORIGIN=<frontend-production-url>`
-
-**Frontend:**
-- `REACT_APP_API_URL=<backend-production-url>/api`
+- **JWT Authentication** with secure token storage
+- **Password Hashing** using bcryptjs with salt rounds
+- **CORS Protection** with configurable origins
+- **Helmet Security Headers** for XSS and injection protection
+- **Input Validation** for all API endpoints
+- **SQL Injection Protection** via Prisma ORM
+- **Error Information Limiting** in production
 
 ## 🧪 Testing
 
 ### Backend Testing
-
 ```bash
 cd backend
 npm test
 ```
 
 ### Frontend Testing
-
 ```bash
 cd frontend
 npm test
 ```
 
+## 🚀 Deployment
+
+### Backend Deployment
+1. Build the application: `npm run build`
+2. Set production environment variables
+3. Run database migrations: `npm run db:migrate`
+4. Start the server: `npm start`
+
+### Frontend Deployment
+1. Build the application: `npm run build`
+2. Serve the `build` folder using a static file server
+3. Configure environment variables for production API URL
+
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes
-4. Run tests and linting
-5. Commit your changes: `git commit -m 'Add feature'`
-6. Push to the branch: `git push origin feature-name`
-7. Submit a pull request
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-## 📝 Code Style
+## 📜 Available Scripts
 
-This project uses:
-- **ESLint** for code linting
-- **Prettier** for code formatting
-- **TypeScript** for type safety
+### Root Level
+- `npm run dev` - Start both frontend and backend
+- `npm run server` - Start backend only
+- `npm run client` - Start frontend only
+- `npm run build` - Build both applications
+- `npm run install-all` - Install all dependencies
 
-Run the following commands to maintain code quality:
+### Backend Scripts
+- `npm run dev` - Start development server with nodemon
+- `npm run build` - Build TypeScript to JavaScript
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run format` - Format code with Prettier
+- `npm run db:*` - Database operations
 
-```bash
-# Backend
-cd backend
-npm run lint:fix
-npm run format
-
-# Frontend
-cd frontend
-npm run lint --fix
-```
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-1. **Database Connection Error**
-   - Ensure PostgreSQL is running
-   - Check DATABASE_URL in .env file
-   - Verify database exists
-
-2. **Port Already in Use**
-   - Change PORT in backend .env file
-   - Or kill the process using the port
-
-3. **CORS Issues**
-   - Verify CORS_ORIGIN in backend .env
-   - Ensure frontend URL matches
-
-4. **JWT Token Issues**
-   - Clear localStorage in browser
-   - Check JWT_SECRET configuration
-
-### Getting Help
-
-If you encounter any issues:
-1. Check the console for error messages
-2. Review environment variables
-3. Ensure all dependencies are installed
-4. Check database connection
+### Frontend Scripts
+- `npm start` - Start development server
+- `npm run build` - Build for production
+- `npm test` - Run tests
+- `npm run eject` - Eject from Create React App
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
+
 
 ## 🙏 Acknowledgments
 
-- [Express.js](https://expressjs.com/) - Fast, unopinionated web framework
-- [React](https://reactjs.org/) - A JavaScript library for building user interfaces
-- [Prisma](https://www.prisma.io/) - Next-generation Node.js and TypeScript ORM
-- [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript at scale
-- [Swagger](https://swagger.io/) - API documentation
+- [Create React App](https://create-react-app.dev/) for the React setup
+- [Prisma](https://prisma.io/) for the excellent ORM
+- [Express.js](https://expressjs.com/) for the web framework
+- [TypeScript](https://www.typescriptlang.org/) for type safety
 
 ---
 
-## 🎯 Next Steps
-
-This boilerplate provides a solid foundation. Consider adding:
-
-- [ ] Unit and integration tests
-- [ ] Docker containerization
-- [ ] CI/CD pipeline
-- [ ] Rate limiting
-- [ ] Email verification
-- [ ] Password reset functionality
-- [ ] File upload capabilities
-- [ ] WebSocket integration
-- [ ] Advanced logging with Winston
-- [ ] Monitoring and analytics
-
-Happy coding! 🚀
+**Note**: This boilerplate is designed to be a starting point for MERN stack applications. Feel free to modify and extend it according to your project requirements.
