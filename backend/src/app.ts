@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { specs, swaggerUi } from './config/swagger';
 import routes from './routes';
 import { errorHandler, notFound } from './middleware/errorHandler';
+import prisma from './config/database';
 
 // Load environment variables
 dotenv.config();
@@ -52,23 +53,54 @@ app.get('/', (req, res) => {
 app.use(notFound);
 app.use(errorHandler);
 
+// Database connection check
+async function checkDatabaseConnection() {
+  try {
+    await prisma.$connect();
+    console.log('Database connected successfully');
+    
+    // Test a simple query to verify the connection
+    await prisma.$queryRaw`SELECT 1`;
+    console.log('Database query test passed');
+    
+    return true;
+  } catch (error) {
+    console.error('Database connection failed:');
+    console.error(error);
+    return false;
+  }
+}
+
 // Start server
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`🔗 Health Check: http://localhost:${PORT}/api/health`);
+const server = app.listen(PORT, async () => {
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+  console.log(`API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`Health Check: http://localhost:${PORT}/api/health`);
+  
+  // Check database connection
+  const isDbConnected = await checkDatabaseConnection();
+  
+  if (!isDbConnected) {
+    console.log('Server started but database connection failed');
+    console.log('Please check your DATABASE_URL in .env file');
+    console.log('Make sure to run: npm run db:migrate');
+  } else {
+    console.log('Server and database are ready!');
+  }
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
+process.on('SIGTERM', async () => {
   console.log('SIGTERM received, shutting down gracefully');
+  await prisma.$disconnect();
   server.close(() => {
     console.log('Process terminated');
   });
 });
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   console.log('SIGINT received, shutting down gracefully');
+  await prisma.$disconnect();
   server.close(() => {
     console.log('Process terminated');
   });

@@ -1,32 +1,21 @@
 import bcrypt from 'bcryptjs';
 import jwt, { SignOptions } from 'jsonwebtoken';
+import type { StringValue } from 'ms';
 import { User } from '@prisma/client';
 import prisma from '../config/database';
 import { ApiError } from '../utils/ApiError';
-
-interface RegisterData {
-  email: string;
-  password: string;
-  name?: string;
-}
-
-interface LoginData {
-  email: string;
-  password: string;
-}
-
-interface UserResponse {
-  id: string;
-  email: string;
-  name: string | null;
-  role: string;
-  createdAt: Date;
-}
-
-interface AuthResponse {
-  user: UserResponse;
-  token: string;
-}
+import { 
+  RegisterDto, 
+  LoginDto, 
+  AuthResponseDto, 
+  UserResponseDto,
+  ValidationConstants,
+  JWTConstants,
+  HttpStatus,
+  ErrorCode,
+  UserModel,
+  DtoTransformer
+} from '../models';
 
 export class AuthService {
   private generateToken(userId: string): string {
@@ -35,25 +24,40 @@ export class AuthService {
       throw new Error('JWT_SECRET is not defined');
     }
     
+    const expiresIn: StringValue = (process.env.JWT_EXPIRE || JWTConstants.ACCESS_TOKEN_EXPIRY) as StringValue;
     const options: SignOptions = {
-      expiresIn: (process.env.JWT_EXPIRE || '7d') as any
+      expiresIn
     };
     
     return jwt.sign({ id: userId }, secret, options);
   }
 
-  private exclude<User, Key extends keyof User>(
-    user: User,
-    keys: Key[]
-  ): Omit<User, Key> {
-    for (const key of keys) {
-      delete user[key];
+  private validatePassword(password: string): void {
+    if (!UserModel.isValidPassword(password)) {
+      throw new ApiError(
+        HttpStatus.BAD_REQUEST, 
+        `Password must be at least ${ValidationConstants.PASSWORD_MIN_LENGTH} characters with uppercase, lowercase, and number`,
+        ErrorCode.VALIDATION_ERROR
+      );
     }
-    return user;
   }
 
-  async register(data: RegisterData): Promise<AuthResponse> {
+  private validateEmail(email: string): void {
+    if (!UserModel.isValidEmail(email)) {
+      throw new ApiError(
+        HttpStatus.BAD_REQUEST, 
+        'Invalid email format',
+        ErrorCode.VALIDATION_ERROR
+      );
+    }
+  }
+
+  async register(data: RegisterDto): Promise<AuthResponseDto> {
     const { email, password, name } = data;
+
+    // Validate input
+    this.validateEmail(email);
+    this.validatePassword(password);
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -61,7 +65,11 @@ export class AuthService {
     });
 
     if (existingUser) {
-      throw new ApiError(400, 'User with this email already exists');
+      throw new ApiError(
+        HttpStatus.CONFLICT, 
+        'User with this email already exists',
+        ErrorCode.USER_ALREADY_EXISTS
+      );
     }
 
     // Hash password
@@ -71,46 +79,53 @@ export class AuthService {
     // Create user
     const user = await prisma.user.create({
       data: {
-        email,
+        email: email.toLowerCase().trim(),
         password: hashedPassword,
-        name: name || null
+        name: name?.trim() || null
       }
     });
 
-    // Remove password from response
-    const userResponse = this.exclude(user, ['password']) as UserResponse;
+    // Generate token and transform response
     const token = this.generateToken(user.id);
-
-    return { user: userResponse, token };
+    return DtoTransformer.userToAuthResponseDto(user, token);
   }
 
-  async login(data: LoginData): Promise<AuthResponse> {
+  async login(data: LoginDto): Promise<AuthResponseDto> {
     const { email, password } = data;
+
+    // Validate input
+    this.validateEmail(email);
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email: email.toLowerCase().trim() }
     });
 
     if (!user) {
-      throw new ApiError(401, 'Invalid email or password');
+      throw new ApiError(
+        HttpStatus.UNAUTHORIZED, 
+        'Invalid email or password',
+        ErrorCode.AUTHENTICATION_FAILED
+      );
     }
 
     // Check password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new ApiError(401, 'Invalid email or password');
+      throw new ApiError(
+        HttpStatus.UNAUTHORIZED, 
+        'Invalid email or password',
+        ErrorCode.AUTHENTICATION_FAILED
+      );
     }
 
-    // Remove password from response
-    const userResponse = this.exclude(user, ['password']) as UserResponse;
+    // Generate token and transform response
     const token = this.generateToken(user.id);
-
-    return { user: userResponse, token };
+    return DtoTransformer.userToAuthResponseDto(user, token);
   }
 
-  async getCurrentUser(userId: string): Promise<UserResponse> {
+  async getCurrentUser(userId: string): Promise<UserResponseDto> {
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -118,14 +133,19 @@ export class AuthService {
         email: true,
         name: true,
         role: true,
-        createdAt: true
+        createdAt: true,
+        updatedAt: true
       }
     });
 
     if (!user) {
-      throw new ApiError(404, 'User not found');
+      throw new ApiError(
+        HttpStatus.NOT_FOUND, 
+        'User not found',
+        ErrorCode.USER_NOT_FOUND
+      );
     }
 
-    return user as UserResponse;
+    return DtoTransformer.userToResponseDto(user);
   }
 }
