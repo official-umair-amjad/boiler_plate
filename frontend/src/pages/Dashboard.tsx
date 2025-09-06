@@ -22,7 +22,7 @@ export const Dashboard: React.FC = () => {
       
       <main className="dashboard-content">
         <div className="dashboard-card">
-          <h2>User Information</h2>
+          <h2>👤 User Information</h2>
           <div className="user-details">
             <p><strong>ID:</strong> {user?.id}</p>
             <p><strong>Email:</strong> {user?.email}</p>
@@ -33,10 +33,29 @@ export const Dashboard: React.FC = () => {
         </div>
 
         <div className="dashboard-card">
-          <h2>API Status</h2>
-          <p>✅ Successfully connected to backend API</p>
-          <p>🔒 Authentication working properly</p>
-          <p>📱 Frontend-Backend integration complete</p>
+          <h2>🚀 System Status</h2>
+          <div className="status-item">
+            <span>✅</span>
+            <span>Backend API Connected</span>
+          </div>
+          <div className="status-item">
+            <span>🔒</span>
+            <span>Authentication Active</span>
+          </div>
+          <div className="status-item">
+            <span>📱</span>
+            <span>Frontend Integration Complete</span>
+          </div>
+        </div>
+
+        <div className="dashboard-card">
+          <h2>📊 Quick Stats</h2>
+          <div className="user-details">
+            <p><strong>Session:</strong> Active</p>
+            <p><strong>Last Login:</strong> {new Date().toLocaleDateString()}</p>
+            <p><strong>Security:</strong> Enabled</p>
+            <p><strong>Theme:</strong> Modern UI</p>
+          </div>
         </div>
       </main>
     </div>

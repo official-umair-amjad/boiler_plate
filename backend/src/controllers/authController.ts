@@ -1,6 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../services/authService';
 import { ApiResponse } from '../utils/ApiResponse';
+import { 
+  RegisterDto, 
+  LoginDto, 
+  HttpStatus,
+  UserResponseDto,
+  AuthResponseDto 
+} from '../models';
 
 const authService = new AuthService();
 
@@ -88,9 +95,10 @@ export class AuthController {
    */
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await authService.register(req.body);
-      const response = new ApiResponse(201, 'User registered successfully', result);
-      res.status(201).json(response);
+      const registerData: RegisterDto = req.body;
+      const result: AuthResponseDto = await authService.register(registerData);
+      const response = new ApiResponse(HttpStatus.CREATED, 'User registered successfully', result);
+      res.status(HttpStatus.CREATED).json(response);
     } catch (error) {
       next(error);
     }
@@ -127,9 +135,10 @@ export class AuthController {
    */
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const result = await authService.login(req.body);
-      const response = new ApiResponse(200, 'Login successful', result);
-      res.status(200).json(response);
+      const loginData: LoginDto = req.body;
+      const result: AuthResponseDto = await authService.login(loginData);
+      const response = new ApiResponse(HttpStatus.OK, 'Login successful', result);
+      res.status(HttpStatus.OK).json(response);
     } catch (error) {
       next(error);
     }
@@ -162,9 +171,9 @@ export class AuthController {
    */
   async getCurrentUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = await authService.getCurrentUser(req.user!.id);
-      const response = new ApiResponse(200, 'User data retrieved successfully', user);
-      res.status(200).json(response);
+      const user: UserResponseDto = await authService.getCurrentUser(req.user!.id);
+      const response = new ApiResponse(HttpStatus.OK, 'User data retrieved successfully', user);
+      res.status(HttpStatus.OK).json(response);
     } catch (error) {
       next(error);
     }
