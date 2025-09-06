@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Environment Variables
+.env
+.env.local
+
+# Build outputs
+/dist/
+/build/
+/out/
+
+# Backend specific
+/backend/node_modules/
+/backend/dist/
+/backend/.env
+
+# Frontend specific
+/frontend/node_modules/
+/frontend/build/
+/frontend/.env
+/frontend/.env.local
